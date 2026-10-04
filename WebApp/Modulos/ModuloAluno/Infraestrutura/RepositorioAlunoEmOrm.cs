@@ -49,4 +49,15 @@ public sealed class RepositorioAlunoEmOrm(EscolaDeCursosDbContext dbContext) : I
     {
         return dbContext.Alunos.ToList();
     }
+
+    public bool ExisteComCpf(string cpf, Guid? idIgnorado = null)
+    {
+        // Compara apenas os dígitos: "123.456.789-01" e "12345678901" são o mesmo CPF
+        string cpfSemMascara = cpf.Replace(".", "").Replace("-", "").Trim();
+
+        return dbContext.Alunos.Any(a =>
+            a.Id != idIgnorado &&
+            a.Cpf.Replace(".", "").Replace("-", "").Trim() == cpfSemMascara
+        );
+    }
 }

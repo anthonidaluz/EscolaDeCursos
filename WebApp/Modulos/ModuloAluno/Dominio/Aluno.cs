@@ -7,6 +7,7 @@ public class Aluno : EntidadeBase<Aluno>
 {
     public string Nome { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
+    public string Cpf { get; set; } = string.Empty;
     public string NumeroMatricula { get; set; } = string.Empty;
 
     public Aluno()
@@ -15,11 +16,13 @@ public class Aluno : EntidadeBase<Aluno>
 
     public Aluno(
         string nome,
-        string email
+        string email,
+        string cpf
     ) : this()
     {
         Nome = nome;
         Email = email;
+        Cpf = cpf;
         NumeroMatricula = GerarNumeroMatricula();
     }
 
@@ -33,11 +36,14 @@ public class Aluno : EntidadeBase<Aluno>
     {
         List<string> erros = [];
 
-        if (string.IsNullOrWhiteSpace(Nome) || Nome.Length < 2 || Nome.Length > 100)
-            erros.Add("O campo \"Nome\" deve conter entre 2 e 100 caracteres.");
+        if (string.IsNullOrWhiteSpace(Nome) || Nome.Length < 3 || Nome.Length > 100)
+            erros.Add("O campo \"Nome\" deve conter entre 3 e 100 caracteres.");
 
         if (!Regex.IsMatch(Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             erros.Add("O campo \"E-mail\" deve conter um endereço de e-mail válido.");
+
+        if (!Regex.IsMatch(Cpf, @"^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$"))
+            erros.Add("O campo \"CPF\" deve estar no formato 000.000.000-00 ou conter 11 dígitos.");
 
         return erros;
     }
@@ -46,5 +52,6 @@ public class Aluno : EntidadeBase<Aluno>
     {
         Nome = entidadeAtualizada.Nome;
         Email = entidadeAtualizada.Email;
+        Cpf = entidadeAtualizada.Cpf;
     }
 }

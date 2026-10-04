@@ -11,7 +11,7 @@ public record ListarInstrutorViewModel(
 
 public record CadastrarInstrutorViewModel(
     [Required(ErrorMessage = "O campo \"Nome\" deve ser preenchido.")]
-    [StringLength(100, MinimumLength = 2, ErrorMessage = "O campo \"Nome\" deve conter entre 2 e 100 caracteres.")]
+    [StringLength(100, MinimumLength = 3, ErrorMessage = "O campo \"Nome\" deve conter entre 3 e 100 caracteres.")]
     string Nome,
 
     [Required(ErrorMessage = "O campo \"Telefone\" deve ser preenchido.")]
@@ -27,7 +27,7 @@ public record EditarInstrutorViewModel(
     Guid Id,
 
     [Required(ErrorMessage = "O campo \"Nome\" deve ser preenchido.")]
-    [StringLength(100, MinimumLength = 2, ErrorMessage = "O campo \"Nome\" deve conter entre 2 e 100 caracteres.")]
+    [StringLength(100, MinimumLength = 3, ErrorMessage = "O campo \"Nome\" deve conter entre 3 e 100 caracteres.")]
     string Nome,
 
     [Required(ErrorMessage = "O campo \"Telefone\" deve ser preenchido.")]

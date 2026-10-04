@@ -20,6 +20,12 @@
         <span asp-validation-for="Email" class="text-danger small fw-semibold"></span>
     </div>
 
+    <div class="mb-3">
+        <label asp-for="Cpf" class="form-label fw-semibold text-primary text-uppercase small">CPF</label>
+        <input asp-for="Cpf" type="text" class="form-control" placeholder="000.000.000-00">
+        <span asp-validation-for="Cpf" class="text-danger small fw-semibold"></span>
+    </div>
+
     <div class="d-flex justify-content-end gap-2 mt-4">
         <a class="btn btn-outline-primary rounded-pill px-4" asp-action="Listar">Voltar</a>
         <button class="btn btn-primary rounded-pill px-4" type="submit">Confirmar</button>

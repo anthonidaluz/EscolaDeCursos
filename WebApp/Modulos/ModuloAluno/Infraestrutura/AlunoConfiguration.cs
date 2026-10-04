@@ -24,11 +24,19 @@ public sealed class AlunoConfiguration : IEntityTypeConfiguration<Aluno>
             .IsRequired();
 
         builder
+            .Property(a => a.Cpf)
+            .HasMaxLength(14)
+            .IsRequired();
+
+        builder
             .Property(a => a.NumeroMatricula)
             .HasMaxLength(20)
             .IsRequired();
 
         builder.HasIndex(a => a.NumeroMatricula)
+            .IsUnique();
+
+        builder.HasIndex(a => a.Cpf)
             .IsUnique();
     }
 }
