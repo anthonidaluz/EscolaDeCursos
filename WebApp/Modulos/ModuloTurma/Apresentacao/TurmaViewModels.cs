@@ -9,7 +9,8 @@ public record ListarTurmaViewModel(
     string NomeInstrutor,
     int NumeroMaximoAlunos,
     DateOnly DataInicio,
-    DateOnly DataTermino
+    DateOnly DataTermino,
+    int QuantidadeMatriculas
 );
 
 public record CadastrarTurmaViewModel(
