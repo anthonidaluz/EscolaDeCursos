@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using EscolaDeCursos.WebApp.Modulos.ModuloAluno.Dominio;
 using EscolaDeCursos.WebApp.Modulos.ModuloCurso.Dominio;
 using EscolaDeCursos.WebApp.Modulos.ModuloInstrutor.Dominio;
+using EscolaDeCursos.WebApp.Modulos.ModuloMatricula.Dominio;
 using EscolaDeCursos.WebApp.Modulos.ModuloTurma.Dominio;
 
 namespace EscolaDeCursos.WebApp.Compartilhado.Infraestrutura.Arquivos;
@@ -22,6 +23,7 @@ public sealed class ContextoJson
     public List<Curso> Cursos { get; set; } = [];
     public List<Aula> Aulas { get; set; } = [];
     public List<Turma> Turmas { get; set; } = [];
+    public List<Matricula> Matriculas { get; set; } = [];
 
     public ContextoJson()
     {
@@ -59,6 +61,7 @@ public sealed class ContextoJson
         SubstituirConteudo(Cursos, contextoSalvo.Cursos);
         SubstituirConteudo(Aulas, contextoSalvo.Aulas);
         SubstituirConteudo(Turmas, contextoSalvo.Turmas);
+        SubstituirConteudo(Matriculas, contextoSalvo.Matriculas);
     }
 
     public void Salvar()
