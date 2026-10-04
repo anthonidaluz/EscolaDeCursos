@@ -1,5 +1,6 @@
 using EscolaDeCursos.WebApp.Modulos.ModuloCurso.Dominio;
 using EscolaDeCursos.WebApp.Modulos.ModuloInstrutor.Dominio;
+using EscolaDeCursos.WebApp.Modulos.ModuloMatricula.Dominio;
 using EscolaDeCursos.WebApp.Modulos.ModuloTurma.Dominio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,7 +10,8 @@ namespace EscolaDeCursos.WebApp.Modulos.ModuloTurma.Apresentacao;
 public class TurmaController(
     IRepositorioTurma repositorioTurma,
     IRepositorioCurso repositorioCurso,
-    IRepositorioInstrutor repositorioInstrutor
+    IRepositorioInstrutor repositorioInstrutor,
+    IRepositorioMatricula repositorioMatricula
 ) : Controller
 {
     [HttpGet]
@@ -24,7 +26,8 @@ public class TurmaController(
                 t.Instrutor.Nome,
                 t.NumeroMaximoAlunos,
                 t.DataInicio,
-                t.DataTermino
+                t.DataTermino,
+                t.Matriculas.Count
             ))
             .ToList();
 
@@ -156,6 +159,15 @@ public class TurmaController(
         if (erroValidacao != null)
             ModelState.AddModelError(string.Empty, erroValidacao);
 
+        int quantidadeMatriculas = repositorioMatricula.ContarPorTurmaId(editarVm.Id);
+        if (turmaAtualizada.NumeroMaximoAlunos < quantidadeMatriculas)
+        {
+            ModelState.AddModelError(
+                nameof(editarVm.NumeroMaximoAlunos),
+                "O número máximo de alunos não pode ser menor que a quantidade de matrículas atuais."
+            );
+        }
+
         if (!ModelState.IsValid)
         {
             CarregarCursosEInstrutores();
@@ -200,7 +212,7 @@ public class TurmaController(
     {
         Turma? turma = repositorioTurma.SelecionarPorId(excluirVm.Id);
 
-        if (turma != null)
+        if (turma != null && !repositorioMatricula.ExistePorTurmaId(excluirVm.Id))
             repositorioTurma.Excluir(excluirVm.Id);
 
         return RedirectToAction(nameof(Listar));

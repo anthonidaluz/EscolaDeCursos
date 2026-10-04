@@ -1,6 +1,7 @@
 using EscolaDeCursos.WebApp.Compartilhado.Dominio;
 using EscolaDeCursos.WebApp.Modulos.ModuloCurso.Dominio;
 using EscolaDeCursos.WebApp.Modulos.ModuloInstrutor.Dominio;
+using EscolaDeCursos.WebApp.Modulos.ModuloMatricula.Dominio;
 
 namespace EscolaDeCursos.WebApp.Modulos.ModuloTurma.Dominio;
 
@@ -14,6 +15,7 @@ public class Turma : EntidadeBase<Turma>
     public int NumeroMaximoAlunos { get; set; }
     public DateOnly DataInicio { get; set; }
     public DateOnly DataTermino { get; set; }
+    public List<Matricula> Matriculas { get; set; } = [];
 
     public Turma()
     {

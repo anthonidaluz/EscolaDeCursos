@@ -24,6 +24,13 @@ public sealed class RepositorioTurmaEmArquivo(ContextoJson contexto)
             .ToList();
     }
 
+    public override bool Excluir(Guid idSelecionado)
+    {
+        bool possuiMatriculas = contexto.Matriculas.Any(m => m.Turma.Id == idSelecionado);
+
+        return !possuiMatriculas && base.Excluir(idSelecionado);
+    }
+
     protected override List<Turma> ObterRegistros(ContextoJson contexto)
     {
         return contexto.Turmas;
