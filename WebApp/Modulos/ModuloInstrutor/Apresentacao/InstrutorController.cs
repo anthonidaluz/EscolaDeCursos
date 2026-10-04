@@ -142,8 +142,20 @@ public class InstrutorController(
     {
         Instrutor? instrutor = repositorioInstrutor.SelecionarPorId(excluirVm.Id);
 
-        if (instrutor == null || repositorioTurma.ExistePorInstrutorId(excluirVm.Id))
+        if (instrutor == null)
             return RedirectToAction(nameof(Listar));
+
+        if (repositorioTurma.ExistePorInstrutorId(excluirVm.Id))
+        {
+            ModelState.AddModelError(string.Empty, "Não é possível excluir um instrutor vinculado a turmas.");
+
+            return View(new ExcluirInstrutorViewModel(
+                instrutor.Id,
+                instrutor.Nome,
+                instrutor.Telefone,
+                instrutor.Cpf
+            ));
+        }
 
         repositorioInstrutor.Excluir(excluirVm.Id);
 

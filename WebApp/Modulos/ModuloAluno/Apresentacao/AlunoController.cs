@@ -120,8 +120,20 @@ public class AlunoController(
     {
         Aluno? aluno = repositorioAluno.SelecionarPorId(excluirVm.Id);
 
-        if (aluno == null || repositorioMatricula.ExistePorAlunoId(excluirVm.Id))
+        if (aluno == null)
             return RedirectToAction(nameof(Listar));
+
+        if (repositorioMatricula.ExistePorAlunoId(excluirVm.Id))
+        {
+            ModelState.AddModelError(string.Empty, "Não é possível excluir um aluno que possui matrículas.");
+
+            return View(new ExcluirAlunoViewModel(
+                aluno.Id,
+                aluno.Nome,
+                aluno.Email,
+                aluno.NumeroMatricula
+            ));
+        }
 
         repositorioAluno.Excluir(excluirVm.Id);
 

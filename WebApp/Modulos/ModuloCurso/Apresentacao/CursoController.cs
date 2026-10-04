@@ -160,10 +160,26 @@ public class CursoController(
     {
         Curso? curso = repositorioCurso.SelecionarPorId(excluirVm.Id);
 
-        if (curso != null
-            && !repositorioAula.ExistePorCursoId(excluirVm.Id)
-            && !repositorioTurma.ExistePorCursoId(excluirVm.Id))
-            repositorioCurso.Excluir(excluirVm.Id);
+        if (curso == null)
+            return RedirectToAction(nameof(Listar));
+
+        if (repositorioAula.ExistePorCursoId(excluirVm.Id))
+            ModelState.AddModelError(string.Empty, "Não é possível excluir um curso que possui aulas cadastradas.");
+
+        if (repositorioTurma.ExistePorCursoId(excluirVm.Id))
+            ModelState.AddModelError(string.Empty, "Não é possível excluir um curso vinculado a turmas.");
+
+        if (!ModelState.IsValid)
+        {
+            return View(new ExcluirCursoViewModel(
+                curso.Id,
+                curso.Nome,
+                curso.Nivel.ToString(),
+                curso.CargaHoraria
+            ));
+        }
+
+        repositorioCurso.Excluir(excluirVm.Id);
 
         return RedirectToAction(nameof(Listar));
     }
