@@ -1,10 +1,12 @@
 using EscolaDeCursos.WebApp.Modulos.ModuloInstrutor.Dominio;
+using EscolaDeCursos.WebApp.Modulos.ModuloTurma.Dominio;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EscolaDeCursos.WebApp.Modulos.ModuloInstrutor.Apresentacao;
 
 public class InstrutorController(
-    IRepositorioInstrutor repositorioInstrutor
+    IRepositorioInstrutor repositorioInstrutor,
+    IRepositorioTurma repositorioTurma
 ) : Controller
 {
     [HttpGet]
@@ -140,7 +142,7 @@ public class InstrutorController(
     {
         Instrutor? instrutor = repositorioInstrutor.SelecionarPorId(excluirVm.Id);
 
-        if (instrutor == null)
+        if (instrutor == null || repositorioTurma.ExistePorInstrutorId(excluirVm.Id))
             return RedirectToAction(nameof(Listar));
 
         repositorioInstrutor.Excluir(excluirVm.Id);
