@@ -1,11 +1,13 @@
 using EscolaDeCursos.WebApp.Modulos.ModuloCurso.Dominio;
+using EscolaDeCursos.WebApp.Modulos.ModuloTurma.Dominio;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EscolaDeCursos.WebApp.Modulos.ModuloCurso.Apresentacao;
 
 public class CursoController(
     IRepositorioCurso repositorioCurso,
-    IRepositorioAula repositorioAula
+    IRepositorioAula repositorioAula,
+    IRepositorioTurma repositorioTurma
 ) : Controller
 {
     [HttpGet]
@@ -159,7 +161,8 @@ public class CursoController(
         Curso? curso = repositorioCurso.SelecionarPorId(excluirVm.Id);
 
         if (curso != null
-            && !repositorioAula.ExistePorCursoId(excluirVm.Id))
+            && !repositorioAula.ExistePorCursoId(excluirVm.Id)
+            && !repositorioTurma.ExistePorCursoId(excluirVm.Id))
             repositorioCurso.Excluir(excluirVm.Id);
 
         return RedirectToAction(nameof(Listar));
