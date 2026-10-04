@@ -25,7 +25,8 @@ public class Aluno : EntidadeBase<Aluno>
 
     private static string GerarNumeroMatricula()
     {
-        return "ALU-" + Guid.CreateVersion7().ToString("N")[..8].ToUpperInvariant();
+        // Guid v4 (aleatório): os primeiros caracteres do v7 são timestamp e se repetem em cadastros próximos
+        return "ALU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
     }
 
     public override List<string> Validar()
