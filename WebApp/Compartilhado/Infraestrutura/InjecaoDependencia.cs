@@ -5,6 +5,8 @@ using EscolaDeCursos.WebApp.Modulos.ModuloAluno.Infraestrutura;
 using EscolaDeCursos.WebApp.Modulos.ModuloInstrutor.Infraestrutura;
 using EscolaDeCursos.WebApp.Modulos.ModuloCurso.Dominio;
 using EscolaDeCursos.WebApp.Modulos.ModuloCurso.Infraestrutura;
+using EscolaDeCursos.WebApp.Modulos.ModuloTurma.Dominio;
+using EscolaDeCursos.WebApp.Modulos.ModuloTurma.Infraestrutura;
 
 namespace EscolaDeCursos.WebApp.Compartilhado.Infraestrutura;
 
@@ -23,5 +25,6 @@ public static class InjecaoDependencia
         services.AddScoped<IRepositorioAluno, RepositorioAlunoEmArquivo>();
         services.AddScoped<IRepositorioCurso, RepositorioCursoEmArquivo>();
         services.AddScoped<IRepositorioAula, RepositorioAulaEmArquivo>();
+        services.AddScoped<IRepositorioTurma, RepositorioTurmaEmArquivo>();
     }
 }
