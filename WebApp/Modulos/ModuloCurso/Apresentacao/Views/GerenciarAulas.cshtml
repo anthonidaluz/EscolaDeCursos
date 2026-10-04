@@ -9,6 +9,13 @@
     <a class="btn btn-outline-primary rounded-pill px-4" asp-action="Listar">Voltar</a>
 </div>
 
+@if (TempData["ErroAula"] is string erroAula)
+{
+    <div class="alert alert-danger border-start border-danger border-4 rounded-3" role="alert">
+        @erroAula
+    </div>
+}
+
 <div class="row g-4">
     <div class="col-lg-4">
         <div class="card border-primary-subtle shadow-sm">
