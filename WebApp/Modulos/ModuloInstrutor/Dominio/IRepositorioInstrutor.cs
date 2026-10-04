@@ -5,4 +5,6 @@ namespace EscolaDeCursos.WebApp.Modulos.ModuloInstrutor.Dominio;
 public interface IRepositorioInstrutor : IRepositorio<Instrutor>
 {
     bool ExisteComNome(string nome, Guid? idIgnorado = null);
+    bool ExisteComTelefone(string telefone, Guid? idIgnorado = null);
+    bool ExisteComCpf(string cpf, Guid? idIgnorado = null);
 }

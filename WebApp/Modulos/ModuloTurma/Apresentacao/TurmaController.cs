@@ -212,8 +212,25 @@ public class TurmaController(
     {
         Turma? turma = repositorioTurma.SelecionarPorId(excluirVm.Id);
 
-        if (turma != null && !repositorioMatricula.ExistePorTurmaId(excluirVm.Id))
-            repositorioTurma.Excluir(excluirVm.Id);
+        if (turma == null)
+            return RedirectToAction(nameof(Listar));
+
+        if (repositorioMatricula.ExistePorTurmaId(excluirVm.Id))
+        {
+            ModelState.AddModelError(string.Empty, "Não é possível excluir uma turma que possui matrículas.");
+
+            return View(new ExcluirTurmaViewModel(
+                turma.Id,
+                turma.Nome,
+                turma.Curso.Nome,
+                turma.Instrutor.Nome,
+                turma.NumeroMaximoAlunos,
+                turma.DataInicio,
+                turma.DataTermino
+            ));
+        }
+
+        repositorioTurma.Excluir(excluirVm.Id);
 
         return RedirectToAction(nameof(Listar));
     }

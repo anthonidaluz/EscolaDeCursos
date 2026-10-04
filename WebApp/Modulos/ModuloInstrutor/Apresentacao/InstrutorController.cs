@@ -44,10 +44,16 @@ public class InstrutorController(
             return View(cadastrarVm);
 
         if (repositorioInstrutor.ExisteComNome(cadastrarVm.Nome))
-        {
             ModelState.AddModelError(nameof(cadastrarVm.Nome), "Já existe um instrutor com este nome.");
+
+        if (repositorioInstrutor.ExisteComTelefone(cadastrarVm.Telefone))
+            ModelState.AddModelError(nameof(cadastrarVm.Telefone), "Já existe um instrutor com este telefone.");
+
+        if (repositorioInstrutor.ExisteComCpf(cadastrarVm.Cpf))
+            ModelState.AddModelError(nameof(cadastrarVm.Cpf), "Já existe um instrutor com este CPF.");
+
+        if (!ModelState.IsValid)
             return View(cadastrarVm);
-        }
 
         Instrutor novoInstrutor = new Instrutor(
             cadastrarVm.Nome,
@@ -92,10 +98,16 @@ public class InstrutorController(
             return View(editarVm);
 
         if (repositorioInstrutor.ExisteComNome(editarVm.Nome, editarVm.Id))
-        {
             ModelState.AddModelError(nameof(editarVm.Nome), "Já existe um instrutor com este nome.");
+
+        if (repositorioInstrutor.ExisteComTelefone(editarVm.Telefone, editarVm.Id))
+            ModelState.AddModelError(nameof(editarVm.Telefone), "Já existe um instrutor com este telefone.");
+
+        if (repositorioInstrutor.ExisteComCpf(editarVm.Cpf, editarVm.Id))
+            ModelState.AddModelError(nameof(editarVm.Cpf), "Já existe um instrutor com este CPF.");
+
+        if (!ModelState.IsValid)
             return View(editarVm);
-        }
 
         Instrutor instrutorAtualizado = new Instrutor(
             editarVm.Nome,
@@ -142,8 +154,20 @@ public class InstrutorController(
     {
         Instrutor? instrutor = repositorioInstrutor.SelecionarPorId(excluirVm.Id);
 
-        if (instrutor == null || repositorioTurma.ExistePorInstrutorId(excluirVm.Id))
+        if (instrutor == null)
             return RedirectToAction(nameof(Listar));
+
+        if (repositorioTurma.ExistePorInstrutorId(excluirVm.Id))
+        {
+            ModelState.AddModelError(string.Empty, "Não é possível excluir um instrutor vinculado a turmas.");
+
+            return View(new ExcluirInstrutorViewModel(
+                instrutor.Id,
+                instrutor.Nome,
+                instrutor.Telefone,
+                instrutor.Cpf
+            ));
+        }
 
         repositorioInstrutor.Excluir(excluirVm.Id);
 

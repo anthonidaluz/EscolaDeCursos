@@ -1,0 +1,10 @@
+@* Exibe os erros que não pertencem a um campo específico (ModelState com chave vazia) *@
+@if (ViewData.ModelState.TryGetValue(string.Empty, out var entrada) && entrada.Errors.Count > 0)
+{
+    <div class="alert alert-danger border-start border-danger border-4 rounded-3" role="alert">
+        @foreach (var erro in entrada.Errors)
+        {
+            <div>@erro.ErrorMessage</div>
+        }
+    </div>
+}

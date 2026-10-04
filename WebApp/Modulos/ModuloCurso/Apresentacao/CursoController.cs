@@ -160,10 +160,26 @@ public class CursoController(
     {
         Curso? curso = repositorioCurso.SelecionarPorId(excluirVm.Id);
 
-        if (curso != null
-            && !repositorioAula.ExistePorCursoId(excluirVm.Id)
-            && !repositorioTurma.ExistePorCursoId(excluirVm.Id))
-            repositorioCurso.Excluir(excluirVm.Id);
+        if (curso == null)
+            return RedirectToAction(nameof(Listar));
+
+        if (repositorioAula.ExistePorCursoId(excluirVm.Id))
+            ModelState.AddModelError(string.Empty, "Não é possível excluir um curso que possui aulas cadastradas.");
+
+        if (repositorioTurma.ExistePorCursoId(excluirVm.Id))
+            ModelState.AddModelError(string.Empty, "Não é possível excluir um curso vinculado a turmas.");
+
+        if (!ModelState.IsValid)
+        {
+            return View(new ExcluirCursoViewModel(
+                curso.Id,
+                curso.Nome,
+                curso.Nivel.ToString(),
+                curso.CargaHoraria
+            ));
+        }
+
+        repositorioCurso.Excluir(excluirVm.Id);
 
         return RedirectToAction(nameof(Listar));
     }
@@ -202,20 +218,18 @@ public class CursoController(
     public ActionResult AdicionarAula(AdicionarAulaViewModel adicionarVm)
     {
         if (!ModelState.IsValid)
-            return RedirectToAction(nameof(GerenciarAulas), new { id = adicionarVm.CursoId });
+            return RedirecionarParaAulas(adicionarVm.CursoId, PrimeiroErroDoModelState());
 
         if (repositorioAula.ExisteComNome(adicionarVm.CursoId, adicionarVm.Nome))
-            return RedirectToAction(nameof(GerenciarAulas), new { id = adicionarVm.CursoId });
+            return RedirecionarParaAulas(adicionarVm.CursoId, "Já existe uma aula com este nome neste curso.");
 
         if (repositorioAula.ExisteComOrdem(adicionarVm.CursoId, adicionarVm.Ordem!.Value))
-            return RedirectToAction(nameof(GerenciarAulas), new { id = adicionarVm.CursoId });
+            return RedirecionarParaAulas(adicionarVm.CursoId, "Já existe uma aula com esta ordem neste curso.");
 
         Curso? curso = repositorioCurso.SelecionarPorId(adicionarVm.CursoId);
 
         if (curso == null)
-        {
-            return RedirectToAction(nameof(GerenciarAulas), new { id = adicionarVm.CursoId });
-        }
+            return RedirectToAction(nameof(Listar));
 
         Aula novaAula = new(
             adicionarVm.Nome,
@@ -227,13 +241,11 @@ public class CursoController(
         List<string> erros = novaAula.Validar();
 
         if (erros.Count > 0)
-        {
-            return RedirectToAction(nameof(GerenciarAulas), new { id = adicionarVm.CursoId });
-        }
+            return RedirecionarParaAulas(adicionarVm.CursoId, erros[0]);
 
         repositorioAula.Cadastrar(novaAula);
 
-        return RedirectToAction(nameof(GerenciarAulas), new { id = adicionarVm.CursoId });
+        return RedirecionarParaAulas(adicionarVm.CursoId);
     }
 
     [HttpPost]
@@ -242,26 +254,18 @@ public class CursoController(
         Aula? aulaPersistida = repositorioAula.SelecionarPorId(editarVm.Id);
 
         if (aulaPersistida == null)
-        {
-            return RedirectToAction(nameof(GerenciarAulas), new { id = editarVm.CursoId });
-        }
+            return RedirecionarParaAulas(editarVm.CursoId, "Aula não encontrada.");
 
         Guid cursoId = aulaPersistida.Curso.Id;
 
         if (!ModelState.IsValid)
-        {
-            return RedirectToAction(nameof(GerenciarAulas), new { id = cursoId });
-        }
+            return RedirecionarParaAulas(cursoId, PrimeiroErroDoModelState());
 
-        if (repositorioAula.ExisteComNome(editarVm.CursoId, editarVm.Nome, editarVm.Id))
-        {
-            return RedirectToAction(nameof(GerenciarAulas), new { id = cursoId });
-        }
+        if (repositorioAula.ExisteComNome(cursoId, editarVm.Nome, editarVm.Id))
+            return RedirecionarParaAulas(cursoId, "Já existe uma aula com este nome neste curso.");
 
         if (repositorioAula.ExisteComOrdem(cursoId, editarVm.Ordem!.Value, editarVm.Id))
-        {
-            return RedirectToAction(nameof(GerenciarAulas), new { id = cursoId });
-        }
+            return RedirecionarParaAulas(cursoId, "Já existe uma aula com esta ordem neste curso.");
 
         Aula aulaAtualizada = new(
             editarVm.Nome,
@@ -273,13 +277,11 @@ public class CursoController(
         List<string> erros = aulaAtualizada.Validar();
 
         if (erros.Count > 0)
-        {
-            return RedirectToAction(nameof(GerenciarAulas), new { id = cursoId });
-        }
+            return RedirecionarParaAulas(cursoId, erros[0]);
 
         repositorioAula.Editar(editarVm.Id, aulaAtualizada);
 
-        return RedirectToAction(nameof(GerenciarAulas), new { id = cursoId });
+        return RedirecionarParaAulas(cursoId);
     }
 
     [HttpPost]
@@ -297,5 +299,22 @@ public class CursoController(
         repositorioAula.Excluir(removerVm.Id);
 
         return RedirectToAction(nameof(GerenciarAulas), new { id = cursoId });
+    }
+
+    private RedirectToActionResult RedirecionarParaAulas(Guid cursoId, string? erro = null)
+    {
+        // TempData sobrevive ao redirect e é lido na view GerenciarAulas
+        if (erro != null)
+            TempData["ErroAula"] = erro;
+
+        return RedirectToAction(nameof(GerenciarAulas), new { id = cursoId });
+    }
+
+    private string PrimeiroErroDoModelState()
+    {
+        return ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage)
+            .First();
     }
 }

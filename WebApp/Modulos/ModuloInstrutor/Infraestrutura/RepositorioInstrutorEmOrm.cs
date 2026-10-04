@@ -58,4 +58,23 @@ public sealed class RepositorioInstrutorEmOrm(EscolaDeCursosDbContext dbContext)
             i.Nome.Trim() == nome.Trim()
         );
     }
+
+    public bool ExisteComTelefone(string telefone, Guid? idIgnorado = null)
+    {
+        return dbContext.Instrutores.Any(i =>
+            i.Id != idIgnorado &&
+            i.Telefone.Trim() == telefone.Trim()
+        );
+    }
+
+    public bool ExisteComCpf(string cpf, Guid? idIgnorado = null)
+    {
+        // Compara apenas os dígitos: "123.456.789-01" e "12345678901" são o mesmo CPF
+        string cpfSemMascara = cpf.Replace(".", "").Replace("-", "").Trim();
+
+        return dbContext.Instrutores.Any(i =>
+            i.Id != idIgnorado &&
+            i.Cpf.Replace(".", "").Replace("-", "").Trim() == cpfSemMascara
+        );
+    }
 }
