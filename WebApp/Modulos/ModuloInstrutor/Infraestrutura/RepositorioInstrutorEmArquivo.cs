@@ -14,6 +14,29 @@ public sealed class RepositorioInstrutorEmArquivo(ContextoJson contexto)
         );
     }
 
+    public bool ExisteComTelefone(string telefone, Guid? idIgnorado = null)
+    {
+        return registros.Any(i =>
+            i.Id != idIgnorado &&
+            i.Telefone.Trim() == telefone.Trim()
+        );
+    }
+
+    public bool ExisteComCpf(string cpf, Guid? idIgnorado = null)
+    {
+        string cpfSemMascara = RemoverMascaraCpf(cpf);
+
+        return registros.Any(i =>
+            i.Id != idIgnorado &&
+            RemoverMascaraCpf(i.Cpf) == cpfSemMascara
+        );
+    }
+
+    private static string RemoverMascaraCpf(string cpf)
+    {
+        return cpf.Replace(".", "").Replace("-", "").Trim();
+    }
+
     protected override List<Instrutor> ObterRegistros(ContextoJson contexto)
     {
         return contexto.Instrutores;
